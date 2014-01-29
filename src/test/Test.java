@@ -3,7 +3,7 @@ package test;
 public class Test {
 	public static void main(String[] args) {
 		System.out.println("Test");
-		System.out.println("Test" + shit(1));
+		System.out.println("Test" + shit(2));
 	}
 	
 	public static int shit(int a) {
