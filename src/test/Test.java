@@ -5,4 +5,8 @@ public class Test {
 		System.out.println("Test");
 		System.out.println("Test2");
 	}
+	
+	public static int shit(int a) {
+		return a++;
+	}
 }
