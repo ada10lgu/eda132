@@ -4,13 +4,12 @@ import java.awt.GridLayout;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import model.OthelloBoard;
 
 @SuppressWarnings("serial")
-public class Othello extends JFrame implements Observer {
+public class Othello extends JFrame {
 
 	private OthelloBoard board;
 
@@ -35,10 +34,5 @@ public class Othello extends JFrame implements Observer {
 		setVisible(true);
 	}
 
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		board.getSquare(1, 0);
-		System.out.println("hämta nått");
-	}
 
 }
