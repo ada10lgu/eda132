@@ -10,7 +10,7 @@ public class Game {
 	public static final int POSSIBLE_MOVE = 3;
 
 	private int[][] board;
-
+ 
 	public Game() {
 		startNewGame();
 		int[][] moves = Moves.getLeagalMoves(BLACK, board);
