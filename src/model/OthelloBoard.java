@@ -1,6 +1,8 @@
 package model;
 
-public class OthelloBoard {
+import java.util.Observable;
+
+public class OthelloBoard extends Observable {
 
 	public static enum Option{NONE,BLACK,WHITE};
 	
@@ -10,12 +12,13 @@ public class OthelloBoard {
 		board = new Option[width][height];
 	}
 	
-	public Option[][] getBoard() {
-		return board;
+	public Option getSquare(int x, int y) {
+		return board[x][y];
 	}
 	
 	public void setSquare(int x, int y, Option o) {
-		
-	}
-	
+		board[x][y] = o;
+		setChanged();
+		notifyObservers();
+	}	
 }
