@@ -1,53 +1,83 @@
 package gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import static model.OthelloBoard.BLACK;
+import static model.OthelloBoard.WHITE;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JButton;
+import javax.swing.JPanel;
 
 import model.OthelloBoard;
-import static model.OthelloBoard.*;
 
 @SuppressWarnings("serial")
-class OthelloSquare extends JButton implements Observer, ActionListener {
+class OthelloSquare extends JPanel implements Observer, MouseListener {
 
 	private OthelloBoard board;
-	private int x,y;
-	
+	private int x, y;
+
 	public OthelloSquare(OthelloBoard board, int x, int y) {
 		board.addObserver(this);
 		this.board = board;
 		this.x = x;
 		this.y = y;
-		addActionListener(this);
-		updateText();
+		addMouseListener(this);
+		repaint();
 	}
 
-	private void updateText() {
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		int width = getWidth();
+		int height = getHeight();
+
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillRect(0, 0, width, height);
+
 		switch (board.getSquare(x, y)) {
-		case EMPTY:
-			setText("-");
-			break;
 		case BLACK:
-			setText("Black");
+			g.setColor(Color.BLACK);
 			break;
 		case WHITE:
-			setText("White");
+			g.setColor(Color.WHITE);
 			break;
 		}
-	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		updateText();
-		
+		g.fillOval(0, 0, width, height);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void update(Observable o, Object arg) {
+		repaint();
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
 		board.setSquare(x, y, BLACK);
-		
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
 	}
 }
