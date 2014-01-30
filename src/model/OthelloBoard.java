@@ -4,20 +4,23 @@ import java.util.Observable;
 
 public class OthelloBoard extends Observable {
 
-	public static enum Option{NONE,BLACK,WHITE};
+	public static final int EMPTY = 0;
+	public static final int BLACK = 1;
+	public static final int WHITE = -1;
 	
-	private Option[][] board;
+	
+	private int[][] board;
 	
 	public OthelloBoard(int width, int height) {
-		board = new Option[width][height];
+		board = new int[width][height];
 	}
 	
-	public Option getSquare(int x, int y) {
+	public int getSquare(int x, int y) {
 		return board[x][y];
 	}
 	
-	public void setSquare(int x, int y, Option o) {
-		board[x][y] = o;
+	public void setSquare(int x, int y, int n) {
+		board[x][y] = n;
 		setChanged();
 		notifyObservers();
 	}	
