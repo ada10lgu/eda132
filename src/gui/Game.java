@@ -8,6 +8,6 @@ public class Game {
 		OthelloBoard model = new OthelloBoard(8, 8);
 		Othello view = new Othello(model);
 		
-		
+		model.addObserver(view);
 	}
 }
