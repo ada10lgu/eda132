@@ -1,12 +1,25 @@
 package test;
 
+import reversi.Game;
+
 public class Test {
-	public static void main(String[] args) {
-		System.out.println("Test");
-		System.out.println("Test" + shit(2));
+	public static void printBoard(int[][] board) {
+		for (int row = 0; row < board.length; row++) {
+			System.out.print("|");
+			for (int column = 0; column < board[row].length; column++) {
+				if (board[row][column] < 0) {
+					System.out.print(board[row][column] + "|");
+				} else {
+					System.out.print(" " + board[row][column] + "|");
+				}
+			}
+			System.out.println();
+		}
 	}
-	
-	public static int shit(int a) {
-		return a++;
+
+	public static void appendMoves(int[][] board, int[][] moves) {
+		for (int[] move : moves) {
+			board[move[0]][move[1]] = Game.POSSIBLE_MOVE;
+		}
 	}
 }
