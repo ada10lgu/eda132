@@ -15,6 +15,10 @@ public class OthelloBoard extends Observable {
 		board = new int[width][height];
 	}
 	
+	private OthelloBoard(int[][] board) {
+		this.board = board;
+	}
+	
 	public int getSquare(int x, int y) {
 		return board[x][y];
 	}
@@ -31,5 +35,11 @@ public class OthelloBoard extends Observable {
 	
 	public int getHeight() {
 		return board[0].length;
+	}
+	
+	@Override
+	protected OthelloBoard clone() { 
+		int[][] cloneBoard = new int[board.length][board[0].length];
+		return new OthelloBoard(cloneBoard);
 	}
 }
