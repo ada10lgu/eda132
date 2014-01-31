@@ -21,17 +21,17 @@ class OthelloSquare extends JButton implements Observer {
 	}
 
 	private void updateText() {
-//		switch (board.getSquare(x, y)) {
-//		case NONE:
-//			setText("");
-//			break;
-//		case BLACK:
-//			setText("Black");
-//			break;
-//		case WHITE:
-//			setText("White");
-//			break;
-//		}
+		switch (board.getSquare(x, y)) {
+		case OthelloBoard.EMPTY:
+			setText("");
+			break;
+		case OthelloBoard.BLACK:
+			setText("Black");
+			break;
+		case OthelloBoard.WHITE:
+			setText("White");
+			break;
+		}
 	}
 	
 	@Override
