@@ -129,4 +129,124 @@ public class Moves {
 		}
 		return moves;
 	}
+
+	public static void performMove(int[][] board, int[] move, int color) {
+		board[move[0]][move[1]] = color;
+		performHorizontalMoves(color, board, move);
+		performVerticalMoves(color, board, move);
+		performDiagonalMoves(color, board, move);
+	}
+
+	private static void performHorizontalMoves(int color, int[][] board,
+			int[] move) {
+		int row = move[0];
+		int column = move[1];
+		int[] boardRow = board[row];
+		for (int i = column - 1; i >= 0; i--) {
+			if (boardRow[i] == color) {
+				for (int j = i + 1; j < column; j++) {
+					boardRow[j] = color;
+				}
+				break;
+			}
+			if (boardRow[i] == Game.EMPTY) {
+				break;
+			}
+		}
+		for (int i = column + 1; i < boardRow.length; i++) {
+			if (boardRow[i] == color) {
+				for (int j = i - 1; j > column; j--) {
+					boardRow[j] = color;
+				}
+				break;
+			}
+			if (boardRow[i] == Game.EMPTY) {
+				break;
+			}
+		}
+	}
+
+	private static void performVerticalMoves(int color, int[][] board,
+			int[] move) {
+		int row = move[0];
+		int column = move[1];
+
+		for (int i = row - 1; i >= 0; i--) {
+			if (board[i][column] == color) {
+				for (int j = i + 1; j < row; j++) {
+					board[j][column] = color;
+				}
+				break;
+			}
+			if (board[i][column] == Game.EMPTY) {
+				break;
+			}
+		}
+		for (int i = row + 1; i < board.length; i++) {
+			if (board[i][column] == color) {
+				for (int j = i - 1; j > row; j--) {
+					board[j][column] = color;
+				}
+				break;
+			}
+			if (board[i][column] == Game.EMPTY) {
+				break;
+			}
+		}
+	}
+
+	private static void performDiagonalMoves(int color, int[][] board,
+			int[] move) {
+		int row = move[0];
+		int column = move[1];
+
+		// \
+		for (int i = row - 1, j = column - 1; i >= 0 && j >= 0; i--, j--) {
+			if (board[i][j] == color) {
+				for (int k = i + 1, l = j + 1; k < row && l < column; k++, l++) {
+					board[k][l] = color;
+				}
+				break;
+			}
+			if (board[i][j] == Game.EMPTY) {
+				break;
+			}
+		}
+		for (int i = row + 1, j = column + 1; i < board.length
+				&& j < board.length; i++, j++) {
+			if (board[i][j] == color) {
+				for (int k = i - 1, l = j - 1; k > row && l > column; k--, l--) {
+					board[k][l] = color;
+				}
+				break;
+			}
+			if (board[i][j] == Game.EMPTY) {
+				break;
+			}
+		}
+
+		// /
+		for (int i = row - 1, j = column + 1; i >= 0 && j < board.length; i--, j++) {
+			if (board[i][j] == color) {
+				for (int k = i + 1, l = j - 1; k < row && l > column; k++, l--) {
+					board[k][l] = color;
+				}
+				break;
+			}
+			if (board[i][j] == Game.EMPTY) {
+				break;
+			}
+		}
+		for (int i = row + 1, j = column - 1; i < board.length && j >= 0; i++, j--) {
+			if (board[i][j] == color) {
+				for (int k = i - 1, l = j + 1; k > row && l < column; k--, l++) {
+					board[k][l] = color;
+				}
+				break;
+			}
+			if (board[i][j] == Game.EMPTY) {
+				break;
+			}
+		}
+	}
 }
