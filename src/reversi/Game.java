@@ -12,14 +12,15 @@ public class Game {
 	private int[][] board;
  
 	public Game() {
-		startNewGame();
+		initNewGame();
 		int[][] moves = Moves.getLeagalMoves(BLACK, board);
 		System.out.println();
 		Test.appendMoves(board, moves);
 		Test.printBoard(board);
 	}
+	
 
-	public void startNewGame() {
+	public void initNewGame() {
 		board = new int[][] {
 				{ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY },
 				{ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY },
