@@ -41,13 +41,11 @@ public class OthelloBoard extends Observable {
 	public void setSquare(int x, int y, int n) {
 		if (n == currentColor
 				&& Moves.isLegalMove(currentLegalMoves, new int[] { x, y })) {
-			System.out.println("SetSquare: " + x + ", " + y);
 			Moves.performMove(board, new int[] { x, y }, n);
 			currentColor *= -1;
 			currentLegalMoves = Moves.getLeagalMoves(currentColor, board);
 			setChanged();
 			notifyObservers(currentColor);
-			System.out.println("Notify");
 		}
 	}
 

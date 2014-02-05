@@ -240,15 +240,11 @@ public class Moves {
 	}
 
 	public static boolean isLegalMove(int[][] currentLegalMoves, int[] move) {
-		System.out.println("CurrentLegalMoves: ");
 		for (int[] legalMove : currentLegalMoves) {
-			System.out.println(legalMove[0] + ", " + legalMove[1]);
 			if (legalMove[0] == move[0] && legalMove[1] == move[1]) {
-				System.out.println();
 				return true;
 			}
 		}
-		System.out.println();
 		return false;
 	}
 }

@@ -5,13 +5,12 @@ import java.util.List;
 
 import model.Moves;
 import model.OthelloBoard;
-
 import test.Test;
 
 public class Search {
 	public static void MinMax(int[][] state, int playerColor) {
 		StateTree states = new StateTree(state, playerColor);
-		states.root.addLevels(3, 5000, System.currentTimeMillis());
+		states.buildTree(5000L);
 		states.evaluate();
 		int[] optMove = states.getOptMove();
 		states.printTree();
@@ -21,7 +20,7 @@ public class Search {
 	public static int[] findMove(OthelloBoard board, int playerColor,
 			long timeLimit) {
 		StateTree states = new StateTree(board.getState(), playerColor);
-		states.root.addLevels(7, timeLimit, System.currentTimeMillis());
+		states.buildTree(5000L);
 		states.evaluate();
 		return states.getOptMove();
 	}
@@ -47,9 +46,32 @@ public class Search {
 
 	private static class StateTree {
 		private Node root;
+		private ArrayList<Node> front;
 
 		public StateTree(int[][] rootData, int playerColor) {
 			root = new Node(rootData, null, playerColor, false, 1, null, "0");
+			front = new ArrayList<Node>();
+			front.add(root);
+		}
+
+		public void buildTree(Long timeLimit) {
+			addLevel(3, front, timeLimit, System.currentTimeMillis());
+		}
+
+		private void addLevel(int maxLevels, ArrayList<Node> front,
+				long timeLimit, long startTime) {
+			boolean stop = false;
+			while (true) {
+				for (Node n : (ArrayList<Node>) front.clone()) {
+					stop = n.createNewStates(timeLimit, startTime);
+					front.addAll(n.children);
+					front.remove(n);
+					if (stop)
+						break;
+				}
+				if (stop)
+					break;
+			}
 		}
 
 		public void evaluate() {
@@ -90,26 +112,13 @@ public class Search {
 				this.name = name;
 			}
 
-			public void addLevels(int maxLevels, long timeLimit, long startTime) {
-				if (level + 1 > maxLevels) {
-					return;
-				}
-				createNewStates();
-				for (Node child : children) {
-					if (System.currentTimeMillis() - startTime >= timeLimit) {
-						break;
-					}
-					child.addLevels(maxLevels, timeLimit, startTime);
-				}
-			}
-
-			public void createNewStates() {
+			public boolean createNewStates(long timeLimit, long startTime) {
 				int[][] moves = Moves.getLeagalMoves(playerColor, data);
-				// System.out.println(name);
-				// Test.printBoard(data);
-				// System.out.println(moves.length);
 				int childNbr = 0;
 				for (int[] move : moves) {
+					if (System.currentTimeMillis() - startTime >= timeLimit) {
+						return true;
+					}
 					int[][] newState = copy(data);
 					Moves.performMove(newState, move, playerColor);
 					children.add(new Node(newState, new int[] { move[0],
@@ -117,6 +126,7 @@ public class Search {
 							level + 1, this, name + ":" + childNbr));
 					childNbr++;
 				}
+				return false;
 			}
 
 			private int[][] copy(int[][] in) {
