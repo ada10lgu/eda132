@@ -1,5 +1,7 @@
 package reversi;
 
+import ai.Search;
+import model.Moves;
 import test.Test;
 
 public class Game {

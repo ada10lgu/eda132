@@ -4,13 +4,13 @@ import reversi.Game;
 
 public class Test {
 	public static void printBoard(int[][] board) {
-		for (int row = 0; row < board.length; row++) {
+		for (int y = 0; y < board.length; y++) {
 			System.out.print("|");
-			for (int column = 0; column < board[row].length; column++) {
-				if (board[row][column] < 0) {
-					System.out.print(board[row][column] + "|");
+			for (int x = 0; x < board[y].length; x++) {
+				if (board[x][y] < 0) {
+					System.out.print(board[x][y] + "|");
 				} else {
-					System.out.print(" " + board[row][column] + "|");
+					System.out.print(" " + board[x][y] + "|");
 				}
 			}
 			System.out.println();
