@@ -3,18 +3,20 @@ package test;
 import reversi.Game;
 
 public class Test {
-	public static void printBoard(int[][] board) {
+	public static String printBoard(int[][] board) {
+		StringBuilder s=new StringBuilder();
 		for (int y = 0; y < board.length; y++) {
-			System.out.print("|");
+			s.append("|");
 			for (int x = 0; x < board[y].length; x++) {
 				if (board[x][y] < 0) {
-					System.out.print(board[x][y] + "|");
+					s.append(board[x][y] + "|");
 				} else {
-					System.out.print(" " + board[x][y] + "|");
+					s.append(" " + board[x][y] + "|");
 				}
 			}
-			System.out.println();
+			s.append("\n");
 		}
+		return s.toString();
 	}
 
 	public static void appendMoves(int[][] board, int[][] moves) {

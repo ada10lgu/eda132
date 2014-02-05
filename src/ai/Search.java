@@ -1,5 +1,7 @@
 package ai;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,40 +10,66 @@ import model.OthelloBoard;
 import test.Test;
 
 public class Search {
-	public static void MinMax(int[][] state, int playerColor) {
-		StateTree states = new StateTree(state, playerColor);
+
+	private static int PLAYER_WON = -1;
+	private static int TIE = 0;
+	private static int AI_WON = 1;
+
+	public static void MinMax(int[][] state, int aiColor) {
+		StateTree states = new StateTree(state, aiColor);
 		states.buildTree(5000L);
-		states.evaluate();
 		int[] optMove = states.getOptMove();
-		states.printTree();
+		try {
+			PrintWriter pw = new PrintWriter("tree.txt");
+
+			pw.println(states.printTree());
+			pw.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Optimal move: " + optMove[0] + ", " + optMove[1]);
 	}
 
-	public static int[] findMove(OthelloBoard board, int playerColor,
-			long timeLimit) {
-		StateTree states = new StateTree(board.getState(), playerColor);
+	public static int[] findMove(OthelloBoard board, int aiColor, long timeLimit) {
+		StateTree states = new StateTree(board.getState(), aiColor);
 		states.buildTree(5000L);
-		states.evaluate();
 		return states.getOptMove();
 	}
 
-	private static double evaluateState(int[][] state, int color,
-			boolean playersTurn) {
+	private static double utility(int[][] state, int color, boolean aisTurn) {
+		int aiMarkers = 0;
 		int playerMarkers = 0;
-		int opponentMarkers = 0;
 		for (int[] row : state) {
 			for (int cell : row) {
 				if (cell == color) {
-					playerMarkers++;
+					aiMarkers++;
 				} else if (cell + color == 0) {
-					opponentMarkers++;
+					playerMarkers++;
 				}
 			}
 		}
-		if (playersTurn) {
-			return (double) playerMarkers / opponentMarkers;
+		if (aiMarkers > playerMarkers) {
+			return AI_WON;
+		} else if (aiMarkers < playerMarkers) {
+			return PLAYER_WON;
 		}
-		return (double) opponentMarkers / playerMarkers;
+		return TIE;
+	}
+
+	private static double eVal(int[][] state, int color, boolean aisTurn) {
+		double aiMarkers = 0;
+		double playerMarkers = 0;
+		for (int[] row : state) {
+			for (int cell : row) {
+				if (cell == color) {
+					aiMarkers++;
+				} else if (cell + color == 0) {
+					playerMarkers++;
+				}
+			}
+		}
+		return aiMarkers / playerMarkers;
 	}
 
 	private static class StateTree {
@@ -55,78 +83,98 @@ public class Search {
 		}
 
 		public void buildTree(Long timeLimit) {
-			addLevel(3, front, timeLimit, System.currentTimeMillis());
+			root.createNewStates(10, timeLimit, System.currentTimeMillis());
 		}
 
-		private void addLevel(int maxLevels, ArrayList<Node> front,
-				long timeLimit, long startTime) {
-			boolean stop = false;
-			while (true) {
-				for (Node n : (ArrayList<Node>) front.clone()) {
-					stop = n.createNewStates(timeLimit, startTime);
-					front.addAll(n.children);
-					front.remove(n);
-					if (stop)
-						break;
-				}
-				if (stop)
-					break;
-			}
-		}
-
-		public void evaluate() {
-			root.evaluate();
-		}
 
 		public int[] getOptMove() {
 			return root.getOptMove();
 		}
 
-		public void printTree() {
-			System.out.println("The tree");
-			root.printTree();
+		public String printTree() {
+			StringBuilder s = new StringBuilder();
+			s.append("The tree");
+			s.append(root.printTree());
+			return s.toString();
 		}
 
 		public class Node {
-			private int[][] data;
+			private int[][] state;
 			int[] move;
 			private Node parent;
 			private List<Node> children;
-			private boolean playerTurn;
-			private int playerColor;
-			private int level;
+			private boolean max;
+			private int aiColor;
 			private double evaluation;
+			private boolean pass;
 
 			private String name;
+			private int level;
 
-			public Node(int[][] rootData, int[] move, int playerColor,
-					boolean playerTurn, int level, Node parent, String name) {
-				data = rootData;
+			public Node(int[][] state, int[] move, int aiColor, boolean max,
+					int level, Node parent, String name) {
+				this.state = state;
 				this.move = move;
-				this.playerColor = playerColor;
-				this.playerTurn = playerTurn;
+				this.aiColor = aiColor;
+				this.max = max;
 				children = new ArrayList<Node>();
 				this.parent = parent;
 				this.level = level;
+				evaluation = Double.MIN_VALUE;
 
 				this.name = name;
 			}
 
-			public boolean createNewStates(long timeLimit, long startTime) {
-				int[][] moves = Moves.getLeagalMoves(playerColor, data);
+			public void createNewStates(int levelLimit, long timeLimit,
+					long startTime) {
+				int[][] moves = Moves.getLeagalMoves(aiColor, state);
 				int childNbr = 0;
-				for (int[] move : moves) {
-					if (System.currentTimeMillis() - startTime >= timeLimit) {
-						return true;
+				if (level == levelLimit) {
+					evaluation = eVal(state, aiColor, max);
+				} else if (moves.length == 0) {
+					pass = true;
+					if (parent.pass) {
+						evaluation = utility(state, aiColor, max);
+					} else {
+						int[][] newState = copy(state);
+						Node child = new Node(newState, new int[] { move[0],
+								move[1] }, aiColor * -1, !max, level + 1, this,
+								name + ":" + childNbr);
+						children.add(child);
+						evaluation = child.evaluation;
 					}
-					int[][] newState = copy(data);
-					Moves.performMove(newState, move, playerColor);
-					children.add(new Node(newState, new int[] { move[0],
-							move[1] }, playerColor * -1, !playerTurn,
-							level + 1, this, name + ":" + childNbr));
-					childNbr++;
+				} else {
+
+					for (int[] move : moves) {
+						if (System.currentTimeMillis() - startTime >= timeLimit) {
+							return;
+						}
+						int[][] newState = copy(state);
+						Moves.performMove(newState, move, aiColor);
+						Node child = new Node(newState, new int[] { move[0],
+								move[1] }, aiColor * -1, !max, level + 1, this,
+								name + ":" + childNbr);
+						children.add(child);
+						child.createNewStates(levelLimit, timeLimit, startTime);
+
+						if (max) {
+							// Max
+							if (child.evaluation > evaluation) {
+								evaluation = child.evaluation;
+							}
+						} else {
+							// Min
+							if (evaluation == Double.MIN_VALUE) {
+								evaluation = child.evaluation;
+							} else if (child.evaluation < evaluation) {
+								evaluation = child.evaluation;
+							}
+						}
+
+						childNbr++;
+					}
 				}
-				return false;
+
 			}
 
 			private int[][] copy(int[][] in) {
@@ -134,31 +182,6 @@ public class Search {
 				for (int i = 0; i < in.length; i++)
 					res[i] = in[i].clone();
 				return res;
-			}
-
-			public void evaluate() {
-				if (children.isEmpty()) {
-					evaluation = evaluateState(data, playerColor, playerTurn);
-				} else {
-					for (Node child : children) {
-						child.evaluate();
-					}
-					for (Node child : children) {
-						if (playerTurn) {
-							// Max
-							if (child.evaluation > evaluation) {
-								evaluation = child.evaluation;
-							}
-						} else {
-							// Min
-							if (evaluation == 0) {
-								evaluation = child.evaluation;
-							} else if (child.evaluation < evaluation) {
-								evaluation = child.evaluation;
-							}
-						}
-					}
-				}
 			}
 
 			public int[] getOptMove() {
@@ -170,20 +193,22 @@ public class Search {
 				return null;
 			}
 
-			public void printTree() {
-				System.out.println("Name: " + name);
-				System.out.println("Level: " + level);
-				System.out.println("Children: " + children.size());
-				System.out.println("Players turn: " + playerTurn);
-				System.out.println("Evaluation: " + evaluation);
+			public String printTree() {
+				StringBuilder s = new StringBuilder();
+				s.append("Name: " + name + "\n");
+				s.append("Level: " + level + "\n");
+				s.append("Children: " + children.size() + "\n");
+				s.append("Players turn: " + max + "\n");
+				s.append("Evaluation: " + evaluation + "\n");
 				if (move != null) {
-					System.out.println("Move: " + move[0] + ", " + move[1]);
+					s.append("Move: " + move[0] + ", " + move[1] + "\n");
 				}
-				Test.printBoard(data);
-				System.out.println();
+				s.append(Test.printBoard(state));
+				s.append("\n");
 				for (Node child : children) {
-					child.printTree();
+					s.append(child.printTree());
 				}
+				return s.toString();
 			}
 		}
 	}
