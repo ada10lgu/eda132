@@ -3,6 +3,8 @@ package ai;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.SwingUtilities;
+
 import model.OthelloBoard;
 
 public class AI implements Observer {
@@ -18,8 +20,23 @@ public class AI implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (((int) arg) == color) {
-			int[] move = Search.findMove(board, color, 5000);
-			board.setSquare(move[0], move[1], color);
+			// int[] move = Search.findMove(board, color, 5000);
+			// board.setSquare(move[0], move[1], color);
+			new runThread().start();
+		}
+	}
+
+	private class runThread extends Thread {
+
+		@Override
+		public void run() {
+			final int[] move = Search.findMove(board, color, 5000);
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					board.setSquare(move[0], move[1], color);
+				}
+			});
+
 		}
 	}
 
