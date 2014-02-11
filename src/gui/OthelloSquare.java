@@ -20,6 +20,8 @@ class OthelloSquare extends JPanel implements Observer, MouseListener {
 	private OthelloBoard board;
 	private int x, y;
 
+	private Color[] bgs = new Color[]{new Color(150,150,150),new Color(200,200,200)};
+	
 	public OthelloSquare(OthelloBoard board, int x, int y) {
 		board.addObserver(this);
 		this.board = board;
@@ -35,7 +37,7 @@ class OthelloSquare extends JPanel implements Observer, MouseListener {
 		int width = getWidth();
 		int height = getHeight();
 
-		g.setColor(Color.LIGHT_GRAY);
+		g.setColor(bgs[x&1^y&1]);
 		g.fillRect(0, 0, width, height);
 
 		switch (board.getSquare(x, y)) {
@@ -46,7 +48,8 @@ class OthelloSquare extends JPanel implements Observer, MouseListener {
 			g.setColor(Color.WHITE);
 			break;
 		}
-		g.fillOval(0, 0, width, height);
+		g.fillOval(10, 10, width-20, height-20);
+		
 	}
 
 	@Override
