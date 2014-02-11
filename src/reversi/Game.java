@@ -34,17 +34,17 @@ public class Game {
 			for (int j = 0; j < board[0].length;j++) {
 				switch (board[i][j]) {
 				case EMPTY:
-					System.out.print(".");
+					System.out.print("..");
 					break;
 				case BLACK:
-					System.out.print("B");
+					System.out.print("B ");
 					break;
 				case 7:
-					System.out.print("X");
+					System.out.print("[]");
 					break;
 					
 				default:
-					System.out.print("W");
+					System.out.print("W ");
 					break;
 				}
 			}
@@ -59,7 +59,7 @@ public class Game {
 		board = new int[][] {
 				{ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY },
 				{ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY },
-				{ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY },
+				{ EMPTY, EMPTY, WHITE, BLACK, EMPTY, EMPTY, EMPTY, EMPTY },
 				{ EMPTY, EMPTY, EMPTY, WHITE, BLACK, EMPTY, EMPTY, EMPTY },
 				{ EMPTY, EMPTY, EMPTY, BLACK, WHITE, EMPTY, EMPTY, EMPTY },
 				{ EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY },
