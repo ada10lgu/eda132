@@ -23,6 +23,7 @@ public class OthelloBoard extends Observable {
 		board[width / 2 - 1][height / 2] = BLACK;
 		board[width / 2 - 1][height / 2 - 1] = WHITE;
 		board[width / 2][height / 2 - 1] = BLACK;
+		
 		playerColor = BLACK;
 		AIColor = WHITE;
 		currentColor = playerColor;

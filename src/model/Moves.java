@@ -79,7 +79,6 @@ public class Moves {
 			int[][] board, int y, int x) {
 		ArrayList<Integer[]> moves = new ArrayList<Integer[]>();
 
-		// \
 		for (int i = y - 1, j = x - 1; i >= 0 && j >= 0; i--, j--) {
 			if (board[j][i] == color) {
 				break;
@@ -99,6 +98,9 @@ public class Moves {
 			}
 		}
 
+		
+		
+		
 		// /
 		for (int i = y - 1, j = x + 1; i >= 0 && j < board.length; i--, j++) {
 			if (board[j][i] == color) {
